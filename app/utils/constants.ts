@@ -478,6 +478,12 @@ async function getLMStudioModels(): Promise<ModelInfo[]> {
 }
 
 async function initializeModelList(): Promise<ModelInfo[]> {
+  // Avoid dynamic network calls during SSR to prevent blocking/freeze
+  if (typeof window === 'undefined') {
+    MODEL_LIST = [...staticModels];
+    return MODEL_LIST;
+  }
+
   let apiKeys: Record<string, string> = {};
 
   try {
